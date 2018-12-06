@@ -65,7 +65,6 @@
 # 	for name, count in nameAndCounts:
 # 		print("姓名： {}, 回合数： {}".format(name, count))
 
-
 # #Content4
 # number11 = int(input("请输入序列1的第1个数字: "))
 # number12 = int(input("请输入序列1的第2个数字: "))
@@ -87,38 +86,40 @@
 
 
 
-#Content5
-import math
-from functools import reduce
-def sumAll(x, y):
-	return x + y
+# #Content5
+# import math
+# from functools import reduce
+# def sumAll(x, y):
+# 	return x + y
 
-def convertToInt(x):
-	return int(x)
+# def convertToInt(x):
+# 	return int(x)
 
-def bzcha(x, y):
-	return x + (y-average)*(y-average)
+# def bzcha(x, y):
+# 	return x + (y-average)*(y-average)
 
-str_ = input("请输入一串序列并用空格隔开: ")
-strs = str_.split()
-nums = list(map(convertToInt, strs))
+# str_ = input("请输入一串序列并用空格隔开: ")
+# strs = str_.split()
+# nums = list(map(convertToInt, strs))
 
-count = len(nums)
-sum_ = reduce(sumAll, nums)
-average = sum_ / count
-print("均值： {}".format(average))
+# count = len(nums)
+# sum_ = reduce(sumAll, nums)
+# average = sum_ / count
+# print("均值： {}".format(average))
 
-nums.insert(0, 0)
-fcha = (reduce(bzcha, nums)) / count
-print("方差： {}".format(fcha))
+# nums.insert(0, 0)
+# fcha = (reduce(bzcha, nums)) / count
+# print("方差： {}".format(fcha))
 
-bzcha = math.sqrt(fcha)
-print("标准差： {}".format(bzcha))
-
-
+# bzcha = math.sqrt(fcha)
+# print("标准差： {}".format(bzcha))
 
 
 
-
+nameAndCounts = [[1,3,5,3],[2,43,5,3],[6,5,32,2],[4,56,1,2]]
+def by_score(t):
+	return t[1]
+nameAndCounts = sorted(nameAndCounts, key=by_score)
+print(nameAndCounts)
 
 
