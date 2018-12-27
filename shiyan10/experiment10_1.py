@@ -119,50 +119,117 @@
 #专门创建了另一个一个数据库JiaChengFirst: create database JiaChengFirst, 在⁨Macintosh HD⁩ ▸ ⁨usr⁩ ▸ ⁨local⁩ ▸ ⁨var⁩ ▸ ⁨mysql里面。
 #专门创建了另一个用户JiaCheng： create user JiaCheng@localhost identified by '1234abcd';
 #							 grant all privileges on *.* to JiaCheng@localhost;
+# import pymysql
+# # conn = pymysql.connect(host="localhost", port=3306, user="root", passwd='0717wjcWJCv', db='mysql')
+# conn = pymysql.connect(host="localhost", port=3306, user="JiaCheng", passwd='1234abcd', db='JiaChengFirst')
+# curs = conn.cursor()
+
+# # curs.execute("DROP TABLE IF EXISTS JiaChengTable1")
+# # sql = """CREATE TABLE JiaChengTable1 (
+# #          FIRST_NAME  CHAR(20) NOT NULL,
+# #          LAST_NAME  CHAR(20),
+# #          AGE INT,  
+# #          SEX CHAR(1),
+# #          INCOME FLOAT )"""
+# # curs.execute(sql)
+
+
+# # SQL 插入语句
+# sql = """INSERT INTO JiaChengTable1(FIRST_NAME,
+#          LAST_NAME, AGE, SEX, INCOME)
+#          VALUES ('JiaCheng', 'Wang', 20, 'F', 5000)"""
+# try:
+#    curs.execute(sql)
+#    conn.commit()
+# except:
+#    conn.rollback()
+
+# sql = "UPDATE JiaChengTable1 SET AGE = AGE+1 WHERE SEX = '%c'" % ('F')
+# try:
+#    curs.execute(sql)
+#    conn.commit()
+# except:
+# 	print('failed')
+# 	conn.rollback()
+
+
+# curs.execute('SELECT * FROM JiaChengTable1')
+# for r in curs.fetchall(): 
+# 	print(r)
+
+# conn.close()
+
+
+
+
+
+
+#Content5:
+#通过可视化网页添加数据到数据库
+from flask import Flask, render_template, url_for, redirect, session
+from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, SelectField
+from wtforms.validators import DataRequired, NumberRange
 import pymysql
-# conn = pymysql.connect(host="localhost", port=3306, user="root", passwd='0717wjcWJCv', db='mysql')
-conn = pymysql.connect(host="localhost", port=3306, user="JiaCheng", passwd='1234abcd', db='JiaChengFirst')
-curs = conn.cursor()
-
-# curs.execute("DROP TABLE IF EXISTS JiaChengTable1")
-# sql = """CREATE TABLE JiaChengTable1 (
-#          FIRST_NAME  CHAR(20) NOT NULL,
-#          LAST_NAME  CHAR(20),
-#          AGE INT,  
-#          SEX CHAR(1),
-#          INCOME FLOAT )"""
-# curs.execute(sql)
 
 
-# SQL 插入语句
-sql = """INSERT INTO JiaChengTable1(FIRST_NAME,
-         LAST_NAME, AGE, SEX, INCOME)
-         VALUES ('JiaCheng', 'Wang', 20, 'F', 5000)"""
-try:
-   curs.execute(sql)
-   conn.commit()
-except:
-   conn.rollback()
-
-sql = "UPDATE JiaChengTable1 SET AGE = AGE+1 WHERE SEX = '%c'" % ('F')
-try:
-   curs.execute(sql)
-   conn.commit()
-except:
-	print('failed')
-	conn.rollback()
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'hard to guess'
+bootstrap = Bootstrap(app)
 
 
-curs.execute('SELECT * FROM JiaChengTable1')
-for r in curs.fetchall(): 
-	print(r)
+class NameForm(FlaskForm):
+    first_name = StringField("Frist Name", validators=[DataRequired()])
+    last_name = StringField("Last Name", validators=[DataRequired()])
+    age = StringField("Age", validators=[DataRequired()])
+    sex = SelectField(
+        label='sex',
+        validators=[DataRequired()],
+        choices=[(1, 'F'), (2, 'M')],
+        coerce=int 
+    )
+    salary = StringField("Salary", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+    
+@app.route("/", methods=["GET", "POST"])
+def index():
+    first_name = None
+    last_name = None
+    age = 0
+    sex = 'M'
+    salary = 0
+    form = NameForm()
+    if form.validate_on_submit():
+         session['first_name'] = form.first_name.data
+         session['last_name'] = form.last_name.data
+         session['age']= form.age.data
+         session['sex'] = form.sex.choices[form.sex.data-1][1]
+         session['salary'] = form.salary.data
+         form.first_name.data = ""
+         form.last_name.data = ""
+         form.age.data = ""
+         form.salary.data = ""
 
-conn.close()
+         conn = pymysql.connect(host="localhost", port=3306, user="JiaCheng", passwd='1234abcd', db='JiaChengFirst')
+         curs = conn.cursor()
+         query = 'INSERT INTO JiaChengTable1 VALUES (%s,%s,%s,%s,%s)'
+         value = (session['first_name'], session['last_name'], session['age'], session['sex'], session['salary'])
+         try:
+            curs.execute(query, value)
+            conn.commit()
+         except:
+            conn.rollback()
+         finally:
+            conn.close()
+
+         return redirect(url_for('index'))#Post/重定向/Get请求,可是如果用session的话，刚进入网址就不会有Stranger了
+    return render_template("tst_form.html", form=form, first_name=session.get('first_name'), last_name=session.get('last_name'), age=session.get('age'), sex=session.get('sex'), salary=session.get('salary'))
 
 
 
-
-
+if __name__ == "__main__":
+   app.run(debug=True)
 
 
 

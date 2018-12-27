@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Flasky{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>你好, {% if first_name %}{{ first_name }} 你的数据已添加到数据库{% else %}Stranger{% endif %}!</h1>
+	<h3>{% if first_name %}姓名: {{last_name}}{{ first_name }}, 性别: {{sex}}, 年龄: {{age}}, 薪水: {{salary}}{% else %}{% endif %}</h3>
+</div>
+{{ wtf.quick_form(form) }}
+{% endblock %}
