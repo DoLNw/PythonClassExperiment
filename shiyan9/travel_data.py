@@ -49,11 +49,19 @@ import sqlite3
 # conn.commit()
 # conn.close()
 
+# conn = sqlite3.connect('travel_data.db')
+# for row in conn.cursor().execute('SELECT * FROM travel'):
+#     print(row)
+# value = list(conn.cursor().execute('SELECT * FROM travel'))
+# print(value)
+# # value = conn.cursor().fetchall()
+# conn.close()
+
+
 conn = sqlite3.connect('travel_data.db')
-for row in conn.cursor().execute('SELECT * FROM travel'):
-    print(row)
-value = list(conn.cursor().execute('SELECT * FROM travel'))
-print(value)
-# value = conn.cursor().fetchall()
+values = list(conn.cursor().execute('SELECT * FROM travel'))
+print(values)
+place11 = (conn.cursor().execute("SELECT count(place) FROM travel where place='杭州'").fetchall())[0][0]
+print(place11)
 conn.close()
 

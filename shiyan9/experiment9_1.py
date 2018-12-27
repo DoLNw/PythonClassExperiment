@@ -53,8 +53,8 @@ def index():
         conn.commit()
         conn.close()
         #return redirect('')
-
-        return redirect(url_for('index'))#Post/重定向/Get请求,可是如果用session的话，刚进入网址就不会有Stranger了
+        
+        return redirect(url_for('my_echart'))#Post/重定向/Get请求,可是如果用session的话，刚进入网址就不会有Stranger了
     return render_template("tst_form.html", form=form, name=session.get('name'), place=session.get('place'), time=session.get('time'))
 
 @app.route("/submissions", methods=["GET", "POST"])
@@ -69,33 +69,19 @@ def my_echart():
     place1=0;place2=0;place3=0;place4=0;place5=0;
     conn = sqlite3.connect('travel_data.db')
     values = list(conn.cursor().execute('SELECT * FROM travel'))
+    place1 = (conn.cursor().execute("SELECT count(place) FROM travel where place='杭州'").fetchall())[0][0]
+    place2 = (conn.cursor().execute("SELECT count(place) FROM travel where place='湖州'").fetchall())[0][0]
+    place3 = (conn.cursor().execute("SELECT count(place) FROM travel where place='苏州'").fetchall())[0][0]
+    place4 = (conn.cursor().execute("SELECT count(place) FROM travel where place='北京'").fetchall())[0][0]
+    place5 = (conn.cursor().execute("SELECT count(place) FROM travel where place='香港'").fetchall())[0][0]
+    time1 = (conn.cursor().execute("SELECT count(time) FROM travel where time='星期一'").fetchall())[0][0]
+    time2 = (conn.cursor().execute("SELECT count(time) FROM travel where time='星期二'").fetchall())[0][0]
+    time3 = (conn.cursor().execute("SELECT count(time) FROM travel where time='星期三'").fetchall())[0][0]
+    time4 = (conn.cursor().execute("SELECT count(time) FROM travel where time='星期四'").fetchall())[0][0]
+    time5 = (conn.cursor().execute("SELECT count(time) FROM travel where time='星期五'").fetchall())[0][0]
+    time6 = (conn.cursor().execute("SELECT count(time) FROM travel where time='星期六'").fetchall())[0][0]
+    time7 = (conn.cursor().execute("SELECT count(time) FROM travel where time='星期日'").fetchall())[0][0]
     conn.close()
-    for value in values:
-        if value[1] == '杭州':
-            place1 += 1
-        elif value[1] == '湖州':
-            place2 += 1
-        elif value[1] == '苏州':
-            place3 += 1
-        elif value[1] == '北京':
-            place4 += 1
-        elif value[1] == '香港':
-            place5 += 1
-
-        if value[2] == '星期一':
-            time1 += 1
-        elif value[2] == '星期二':
-            time2 += 1
-        elif value[2] == '星期三':
-            time3 += 1
-        elif value[2] == '星期四':
-            time4 += 1
-        elif value[2] == '星期五':
-            time5 += 1
-        elif value[2] == '星期六':
-            time6 += 1
-        elif value[2] == '星期日':
-            time7 += 1
 
     return render_template('charts.html', place1=place1, place2=place2, place3=place3, place4=place4, place5=place5, \
         time1=time1, time2=time2, time3=time3, time4=time4, time5=time5, time6=time6, time7=time7)
