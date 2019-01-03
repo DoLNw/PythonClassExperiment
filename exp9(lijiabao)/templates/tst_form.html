@@ -1,0 +1,39 @@
+﻿
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Flasky{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+	<h1>Hello, {% if name %}{{ name }}{% else %}Stranger{% endif %}!</h1>
+</div>
+
+<h4>选择情况统计表</h4>
+
+<canvas id="myChart" width="400" height="100"></canvas>
+<script src='/static/chart/Chart.min.js'></script> 
+<script type="text/javascript">  
+var place=JSON.parse({{ place|tojson }})
+console.log(typeof(place))
+var ctx = document.getElementById("myChart").getContext("2d");
+var data = {
+	/// 表现在X轴上的数据，数组形式
+		 labels : place,
+	 /// 第一条线
+		 datasets : [{
+			 backgroundColor: 'black',
+			 hoverBackgroundColor: 'green',
+			label:'人数',
+			data : {{num}}
+		 }]
+ }
+chart=new Chart(ctx,{
+	type:'bar',
+	data:data
+})
+</script>  
+
+{{ wtf.quick_form(form) }}
+
+{% endblock %}
